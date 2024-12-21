@@ -1,5 +1,6 @@
+import { Request, Response } from "express";
 
-interface Users {
+interface User {
   id?: string;
   name: string;
   age: number;
@@ -7,18 +8,23 @@ interface Users {
 }
 
 export class Controller {
-  private users: Users[] = [];
+  private users: User[] = [];
 
-  index(){
-    return this.users;
+  index = (req: Request, res: Response) => {
+    res.status(200).json(this.users);
   }
 
-  create(user: Omit<Users, "id">){
-    const createUser = {
+  
+  create = (req: Request, res: Response) =>{
+    const userData = req.body as Omit<User, "id">;
+
+    const user:User = {
       id: String(this.users.length + 1),
-      ...user
+      ...userData
     }
-    this.users.push(createUser);
-    return createUser;
+
+    this.users.push(user);
+    
+    return res.status(201).json(user);
   }
 }
