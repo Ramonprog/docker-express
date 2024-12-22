@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: database
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: express-docker
+    ports:
+      - '5432:5432'
+
+  app:
+    depends_on:
+      - postgres
+    container_name: app
+    restart: unless-stopped
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
