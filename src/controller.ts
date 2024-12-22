@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { knex } from "./database";
 
 interface User {
   id?: string;
@@ -8,23 +9,17 @@ interface User {
 }
 
 export class Controller {
-  private users: User[] = [];
 
-  index = (req: Request, res: Response) => {
-    res.status(200).json(this.users);
+  index = async (req: Request, res: Response) => {
+    const users = await knex('users')
+    return res.status(200).json(users);
   }
 
   
-  create = (req: Request, res: Response) =>{
+  create = async (req: Request, res: Response) =>{
     const userData = req.body as Omit<User, "id">;
 
-    const user:User = {
-      id: String(this.users.length + 1),
-      ...userData
-    }
-
-    this.users.push(user);
-    
+    const user = await knex('users').insert(userData).returning('*');
     return res.status(201).json(user);
   }
 }
